@@ -16,19 +16,19 @@ namespace steg {
             this.url = url;
         }
 
-        load(steg: Core, callback: (res: Resource) => void): void {
-            if (!steg.audioContext) {
+        load(core: Core, callback: (res: Resource) => void): void {
+            if (!core.audioContext) {
                 console.log("No audio context. No Sound");
                 callback(this);
             } else {
-                this.audioContext = steg.audioContext;
+                this.audioContext = core.audioContext;
 
                 var request = new XMLHttpRequest();
                 request.open('GET', this.url, true);
                 request.responseType = 'arraybuffer';
 
                 request.onload = () => {
-                    steg.audioContext.decodeAudioData(request.response, (audioBuffer: AudioBuffer) => {
+                    core.audioContext.decodeAudioData(request.response, (audioBuffer: AudioBuffer) => {
                         this.audioBuffer = audioBuffer;
                         callback(this);
                     });

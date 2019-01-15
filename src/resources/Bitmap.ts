@@ -11,7 +11,7 @@ namespace steg {
             this.url = url;
         }
 
-        load(steg: Core, callback: (res: Resource) => void) {
+        load(core: Core, callback: (res: Resource) => void) {
             this.image = new Image();
             this.image.onload = () => {
                 this.loaded();
@@ -26,14 +26,20 @@ namespace steg {
             this.height = this.image.height;
         }
 
-        drawScaled(steg: Core, x: number, y: number, width: number, height: number) {
-            var ctx: CanvasRenderingContext2D = steg.ctx;
+        drawSection(core: Core, x: number, y: number, sx: number, sy: number, width: number, height: number) {
+            var ctx: CanvasRenderingContext2D = core.ctx;
+
+            ctx.drawImage(this.image, sx, sy, width, height, x, y, width, height);
+        }
+
+        drawScaled(core: Core, x: number, y: number, width: number, height: number) {
+            var ctx: CanvasRenderingContext2D = core.ctx;
 
             ctx.drawImage(this.image, x, y, width, height);
         }
 
-        draw(steg: Core, x: number, y: number) {
-            var ctx: CanvasRenderingContext2D = steg.ctx;
+        draw(core: Core, x: number, y: number) {
+            var ctx: CanvasRenderingContext2D = core.ctx;
 
             ctx.drawImage(this.image, x, y);
         }

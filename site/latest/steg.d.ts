@@ -56,10 +56,11 @@ declare namespace steg {
         width: number;
         height: number;
         constructor(url: string);
-        load(steg: Core, callback: (res: Resource) => void): void;
+        load(core: Core, callback: (res: Resource) => void): void;
         loaded(): void;
-        drawScaled(steg: Core, x: number, y: number, width: number, height: number): void;
-        draw(steg: Core, x: number, y: number): void;
+        drawSection(core: Core, x: number, y: number, sx: number, sy: number, width: number, height: number): void;
+        drawScaled(core: Core, x: number, y: number, width: number, height: number): void;
+        draw(core: Core, x: number, y: number): void;
         getName(): string;
     }
 }
@@ -71,9 +72,9 @@ declare namespace steg {
         constructor(url: string, tileWidth: number, tileHeight: number);
         loaded(): void;
         getName(): string;
-        drawTile(steg: Core, x: number, y: number, tile: number): void;
-        drawTileScaled(steg: Core, x: number, y: number, width: number, height: number, tile: number): void;
-        drawTileReverse(steg: Core, x: number, y: number, tile: number): void;
+        drawTile(core: Core, x: number, y: number, tile: number): void;
+        drawTileScaled(core: Core, x: number, y: number, width: number, height: number, tile: number): void;
+        drawTileReverse(core: Core, x: number, y: number, tile: number): void;
     }
 }
 declare namespace steg {
@@ -85,7 +86,7 @@ declare namespace steg {
         audioContext: AudioContext;
         lastSource: AudioBufferSourceNode;
         constructor(url: string);
-        load(steg: Core, callback: (res: Resource) => void): void;
+        load(core: Core, callback: (res: Resource) => void): void;
         private createSource;
         playImpl(): void;
         play(): void;
@@ -100,9 +101,32 @@ declare namespace steg {
         loaded: boolean;
         audioContext: AudioContext;
         constructor(url: string);
-        load(steg: Core, callback: (res: Resource) => void): void;
+        load(core: Core, callback: (res: Resource) => void): void;
         private createSource;
         play(volume: number): void;
+        getName(): string;
+    }
+}
+declare namespace steg {
+    class Sprite {
+        bitmap: Bitmap;
+        x: number;
+        y: number;
+        width: number;
+        height: number;
+        constructor(bitmap: Bitmap, x: number, y: number, width: number, height: number);
+        draw(core: Core, x: number, y: number): void;
+    }
+}
+declare namespace steg {
+    class SpriteSheet implements Resource {
+        ref: string;
+        bitmap: Bitmap;
+        sprites: any;
+        constructor(ref: string);
+        load(core: Core, callback: (res: Resource) => void): void;
+        getSprite(name: string): Sprite;
+        createSprites(data: any): void;
         getName(): string;
     }
 }
@@ -110,13 +134,15 @@ declare namespace steg {
     class Resources {
         static added: Array<Resource>;
         static loaded: Array<Resource>;
+        static lookup: any;
         static callback: () => void;
-        static steg: Core;
+        static core: Core;
+        static loadSpriteSheet(ref: string): SpriteSheet;
         static loadMusic(url: string): Music;
         static loadSound(url: string): Sound;
         static laodBitmap(url: string): Bitmap;
         static loadTileset(url: string, tileWidth: number, tileHeight: number): Tileset;
-        static load(steg: Core, callback: () => void): void;
+        static load(core: Core, callback: () => void): void;
         static resourceCallback(res: Resource): void;
     }
 }

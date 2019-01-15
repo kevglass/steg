@@ -198,12 +198,12 @@ var steg;
 /// <reference path="../Core.ts"/>
 var steg;
 /// <reference path="../Core.ts"/>
-(function (steg_1) {
+(function (steg) {
     var Bitmap = /** @class */ (function () {
         function Bitmap(url) {
             this.url = url;
         }
-        Bitmap.prototype.load = function (steg, callback) {
+        Bitmap.prototype.load = function (core, callback) {
             var _this = this;
             this.image = new Image();
             this.image.onload = function () {
@@ -216,12 +216,16 @@ var steg;
             this.width = this.image.width;
             this.height = this.image.height;
         };
-        Bitmap.prototype.drawScaled = function (steg, x, y, width, height) {
-            var ctx = steg.ctx;
+        Bitmap.prototype.drawSection = function (core, x, y, sx, sy, width, height) {
+            var ctx = core.ctx;
+            ctx.drawImage(this.image, sx, sy, width, height, x, y, width, height);
+        };
+        Bitmap.prototype.drawScaled = function (core, x, y, width, height) {
+            var ctx = core.ctx;
             ctx.drawImage(this.image, x, y, width, height);
         };
-        Bitmap.prototype.draw = function (steg, x, y) {
-            var ctx = steg.ctx;
+        Bitmap.prototype.draw = function (core, x, y) {
+            var ctx = core.ctx;
             ctx.drawImage(this.image, x, y);
         };
         Bitmap.prototype.getName = function () {
@@ -229,12 +233,12 @@ var steg;
         };
         return Bitmap;
     }());
-    steg_1.Bitmap = Bitmap;
+    steg.Bitmap = Bitmap;
 })(steg || (steg = {}));
 /// <reference path="Bitmap.ts"/>
 var steg;
 /// <reference path="Bitmap.ts"/>
-(function (steg_2) {
+(function (steg) {
     var Tileset = /** @class */ (function (_super) {
         __extends(Tileset, _super);
         function Tileset(url, tileWidth, tileHeight) {
@@ -249,57 +253,57 @@ var steg;
         Tileset.prototype.getName = function () {
             return "Tileset [" + this.url + "]";
         };
-        Tileset.prototype.drawTile = function (steg, x, y, tile) {
+        Tileset.prototype.drawTile = function (core, x, y, tile) {
             var xp = Math.floor(tile % this.scanline);
             var yp = Math.floor(tile / this.scanline);
             xp *= this.tileWidth;
             yp *= this.tileHeight;
-            steg.ctx.drawImage(this.image, xp, yp, this.tileWidth, this.tileHeight, x, y, this.tileWidth, this.tileHeight);
+            core.ctx.drawImage(this.image, xp, yp, this.tileWidth, this.tileHeight, x, y, this.tileWidth, this.tileHeight);
         };
-        Tileset.prototype.drawTileScaled = function (steg, x, y, width, height, tile) {
+        Tileset.prototype.drawTileScaled = function (core, x, y, width, height, tile) {
             var xp = Math.floor(tile % this.scanline);
             var yp = Math.floor(tile / this.scanline);
             xp *= this.tileWidth;
             yp *= this.tileHeight;
-            steg.ctx.drawImage(this.image, xp, yp, this.tileWidth, this.tileHeight, x, y, width, height);
+            core.ctx.drawImage(this.image, xp, yp, this.tileWidth, this.tileHeight, x, y, width, height);
         };
-        Tileset.prototype.drawTileReverse = function (steg, x, y, tile) {
+        Tileset.prototype.drawTileReverse = function (core, x, y, tile) {
             var xp = Math.floor(tile % this.scanline);
             var yp = Math.floor(tile / this.scanline);
             xp *= this.tileWidth;
             yp *= this.tileHeight;
-            steg.ctx.scale(-1, 1);
-            steg.ctx.drawImage(this.image, xp, yp, this.tileWidth, this.tileHeight, -(x + this.tileWidth), y, this.tileWidth, this.tileHeight);
-            steg.ctx.scale(-1, 1);
+            core.ctx.scale(-1, 1);
+            core.ctx.drawImage(this.image, xp, yp, this.tileWidth, this.tileHeight, -(x + this.tileWidth), y, this.tileWidth, this.tileHeight);
+            core.ctx.scale(-1, 1);
         };
         return Tileset;
-    }(steg_2.Bitmap));
-    steg_2.Tileset = Tileset;
+    }(steg.Bitmap));
+    steg.Tileset = Tileset;
 })(steg || (steg = {}));
 /// <reference path="../Core.ts"/>
 /// <reference path="Resource.ts"/>
 var steg;
 /// <reference path="../Core.ts"/>
 /// <reference path="Resource.ts"/>
-(function (steg_3) {
+(function (steg) {
     var Music = /** @class */ (function () {
         function Music(url) {
             this.loaded = false;
             this.url = url;
         }
-        Music.prototype.load = function (steg, callback) {
+        Music.prototype.load = function (core, callback) {
             var _this = this;
-            if (!steg.audioContext) {
+            if (!core.audioContext) {
                 console.log("No audio context. No Sound");
                 callback(this);
             }
             else {
-                this.audioContext = steg.audioContext;
+                this.audioContext = core.audioContext;
                 var request = new XMLHttpRequest();
                 request.open('GET', this.url, true);
                 request.responseType = 'arraybuffer';
                 request.onload = function () {
-                    steg.audioContext.decodeAudioData(request.response, function (audioBuffer) {
+                    core.audioContext.decodeAudioData(request.response, function (audioBuffer) {
                         _this.audioBuffer = audioBuffer;
                         callback(_this);
                     });
@@ -319,7 +323,7 @@ var steg;
             return bufferSource;
         };
         Music.prototype.playImpl = function () {
-            if ((steg_3.Core.musicOn) && (steg_3.Core.audioReady)) {
+            if ((steg.Core.musicOn) && (steg.Core.audioReady)) {
                 if (this.audioBuffer) {
                     var source = this.createSource(1.0);
                     source.loop = true;
@@ -345,30 +349,30 @@ var steg;
         };
         return Music;
     }());
-    steg_3.Music = Music;
+    steg.Music = Music;
 })(steg || (steg = {}));
 /// <reference path="Resource.ts"/>
 var steg;
 /// <reference path="Resource.ts"/>
-(function (steg_4) {
+(function (steg) {
     var Sound = /** @class */ (function () {
         function Sound(url) {
             this.loaded = false;
             this.url = url;
         }
-        Sound.prototype.load = function (steg, callback) {
+        Sound.prototype.load = function (core, callback) {
             var _this = this;
-            if (!steg.audioContext) {
+            if (!core.audioContext) {
                 console.log("No audio context. No Sound");
                 callback(this);
             }
             else {
-                this.audioContext = steg.audioContext;
+                this.audioContext = core.audioContext;
                 var request = new XMLHttpRequest();
                 request.open('GET', this.url, true);
                 request.responseType = 'arraybuffer';
                 request.onload = function () {
-                    steg.audioContext.decodeAudioData(request.response, function (audioBuffer) {
+                    core.audioContext.decodeAudioData(request.response, function (audioBuffer) {
                         _this.audioBuffer = audioBuffer;
                         callback(_this);
                     });
@@ -387,7 +391,7 @@ var steg;
             return bufferSource;
         };
         Sound.prototype.play = function (volume) {
-            if ((steg_4.Core.soundOn) && (steg_4.Core.audioReady)) {
+            if ((steg.Core.soundOn) && (steg.Core.audioReady)) {
                 if (this.audioBuffer) {
                     var source = this.createSource(volume);
                     source.loop = false;
@@ -400,51 +404,127 @@ var steg;
         };
         return Sound;
     }());
-    steg_4.Sound = Sound;
+    steg.Sound = Sound;
+})(steg || (steg = {}));
+/// <reference path="resources/Bitmap.ts"/>
+var steg;
+/// <reference path="resources/Bitmap.ts"/>
+(function (steg) {
+    var Sprite = /** @class */ (function () {
+        function Sprite(bitmap, x, y, width, height) {
+            this.bitmap = bitmap;
+            this.x = x;
+            this.y = y;
+            this.width = width;
+            this.height = height;
+        }
+        Sprite.prototype.draw = function (core, x, y) {
+        };
+        return Sprite;
+    }());
+    steg.Sprite = Sprite;
+})(steg || (steg = {}));
+/// <reference path="Resource.ts"/>
+/// <reference path="../Resources.ts"/>
+/// <reference path="../Sprite.ts"/>
+var steg;
+/// <reference path="Resource.ts"/>
+/// <reference path="../Resources.ts"/>
+/// <reference path="../Sprite.ts"/>
+(function (steg) {
+    var SpriteSheet = /** @class */ (function () {
+        function SpriteSheet(ref) {
+            this.sprites = {};
+            this.ref = ref;
+            this.bitmap = steg.Resources.laodBitmap(ref + ".png");
+        }
+        SpriteSheet.prototype.load = function (core, callback) {
+            var _this = this;
+            var request = new XMLHttpRequest();
+            request.open('GET', this.ref + ".json", true);
+            request.onload = function () {
+                if (request.status == 200) {
+                    var data = JSON.parse(request.responseText);
+                    _this.createSprites(data);
+                    callback(_this);
+                }
+            };
+            request.onerror = function (error) { console.log(error); };
+            request.send();
+        };
+        SpriteSheet.prototype.getSprite = function (name) {
+            return this.sprites[name];
+        };
+        SpriteSheet.prototype.createSprites = function (data) {
+            for (var name in data.frames) {
+                var frameData = data.frames[name];
+                var frame = frameData.frame;
+                var sprite = new steg.Sprite(this.bitmap, frame.x, frame.y, frame.width, frame.height);
+                this.sprites[name] = frame;
+            }
+        };
+        SpriteSheet.prototype.getName = function () {
+            return "SpriteSheet [" + this.ref + "]";
+        };
+        return SpriteSheet;
+    }());
+    steg.SpriteSheet = SpriteSheet;
 })(steg || (steg = {}));
 /// <reference path="resources/Resource.ts"/>
 /// <reference path="resources/Bitmap.ts"/>
 /// <reference path="resources/Tileset.ts"/>
 /// <reference path="resources/Music.ts"/>
 /// <reference path="resources/Sound.ts"/>
+/// <reference path="resources/SpriteSheet.ts"/>
 var steg;
 /// <reference path="resources/Resource.ts"/>
 /// <reference path="resources/Bitmap.ts"/>
 /// <reference path="resources/Tileset.ts"/>
 /// <reference path="resources/Music.ts"/>
 /// <reference path="resources/Sound.ts"/>
-(function (steg_5) {
+/// <reference path="resources/SpriteSheet.ts"/>
+(function (steg) {
     var Resources = /** @class */ (function () {
         function Resources() {
         }
+        Resources.loadSpriteSheet = function (ref) {
+            var sheet = new steg.SpriteSheet(ref);
+            this.added.push(sheet);
+            this.lookup[ref] = sheet;
+            return sheet;
+        };
         Resources.loadMusic = function (url) {
-            var music = new steg_5.Music(url);
+            var music = new steg.Music(url);
             this.added.push(music);
+            this.lookup[url] = music;
             return music;
         };
         Resources.loadSound = function (url) {
-            var sound = new steg_5.Sound(url);
+            var sound = new steg.Sound(url);
             this.added.push(sound);
+            this.lookup[url] = sound;
             return sound;
         };
         Resources.laodBitmap = function (url) {
-            var bitmap = new steg_5.Bitmap(url);
+            var bitmap = new steg.Bitmap(url);
             this.added.push(bitmap);
+            this.lookup[url] = bitmap;
             return bitmap;
         };
         Resources.loadTileset = function (url, tileWidth, tileHeight) {
-            var tileset = new steg_5.Tileset(url, tileWidth, tileHeight);
+            var tileset = new steg.Tileset(url, tileWidth, tileHeight);
             this.added.push(tileset);
+            this.lookup[url] = tileset;
             return tileset;
         };
-        Resources.load = function (steg, callback) {
+        Resources.load = function (core, callback) {
             var _this = this;
             this.callback = callback;
-            this.steg = steg;
+            this.core = core;
             for (var i = 0; i < this.added.length; i++) {
-                this.added[i].load(this.steg, function (res) { _this.resourceCallback(res); });
+                this.added[i].load(this.core, function (res) { _this.resourceCallback(res); });
             }
-            steg.drawLoadingScreen(this.loaded.length, this.added.length);
+            core.drawLoadingScreen(this.loaded.length, this.added.length);
             if (this.loaded.length == this.added.length) {
                 this.callback();
             }
@@ -452,15 +532,16 @@ var steg;
         Resources.resourceCallback = function (res) {
             console.log("Loaded: " + res.getName());
             this.loaded.push(res);
-            this.steg.drawLoadingScreen(this.loaded.length, this.added.length);
+            this.core.drawLoadingScreen(this.loaded.length, this.added.length);
             if (this.loaded.length == this.added.length) {
                 this.callback();
             }
         };
         Resources.added = [];
         Resources.loaded = [];
+        Resources.lookup = {};
         return Resources;
     }());
-    steg_5.Resources = Resources;
+    steg.Resources = Resources;
 })(steg || (steg = {}));
 //# sourceMappingURL=steg.js.map
