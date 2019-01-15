@@ -40,8 +40,8 @@ namespace steg {
                 var frameData : any = data.frames[name];
                 var frame : any = frameData.frame;
 
-                var sprite: Sprite = new Sprite(this.bitmap, frame.x, frame.y, frame.width, frame.height);
-                this.sprites[name] = frame;
+                var sprite: Sprite = new Sprite(this.bitmap, frame.x, frame.y, frame.w, frame.h);
+                this.sprites[name] = sprite;
             }
         }
         

@@ -419,6 +419,7 @@ var steg;
             this.height = height;
         }
         Sprite.prototype.draw = function (core, x, y) {
+            this.bitmap.drawSection(core, x, y, this.x, this.y, this.width, this.height);
         };
         return Sprite;
     }());
@@ -459,8 +460,8 @@ var steg;
             for (var name in data.frames) {
                 var frameData = data.frames[name];
                 var frame = frameData.frame;
-                var sprite = new steg.Sprite(this.bitmap, frame.x, frame.y, frame.width, frame.height);
-                this.sprites[name] = frame;
+                var sprite = new steg.Sprite(this.bitmap, frame.x, frame.y, frame.w, frame.h);
+                this.sprites[name] = sprite;
             }
         };
         SpriteSheet.prototype.getName = function () {

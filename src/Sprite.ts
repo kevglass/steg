@@ -18,7 +18,7 @@ namespace steg {
         }
 
         draw(core: Core, x: number, y: number) {
-
+            this.bitmap.drawSection(core, x, y, this.x, this.y, this.width, this.height);
         }
     }
 }
