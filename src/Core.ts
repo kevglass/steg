@@ -13,7 +13,6 @@ namespace steg {
         readyToStart: boolean = false;
         started: boolean = false;
         audioContext: AudioContext;
-        startImage: Bitmap;
 
         constructor(canvas: HTMLCanvasElement, game: Game) {
             this.game = game;
@@ -22,10 +21,6 @@ namespace steg {
 
         start(): void {
             this.init();
-        }
-
-        setStartImage(startImage: Bitmap): void {
-            this.startImage = startImage;
         }
 
         init(): void {
@@ -70,10 +65,14 @@ namespace steg {
             this.canvas.height = this.canvas.clientHeight;
 
             this.fillRect(0, 0, this.canvas.width, this.canvas.height, "#000000"); this.ctx.fillStyle = "#FFFFFF";
+
             this.ctx.font = "20px Helvetica";
-            this.ctx.fillText("Loading " + loaded + "/" + total, 50, 50);
-            this.fillRect(50, 60, (this.canvas.width - 100), 20, "#555555");
-            this.fillRect(50, 60, (this.canvas.width - 100) * (loaded / total), 20, "#0000FF");
+            this.ctx.textAlign = "center";
+            this.ctx.fillText("Loading " + loaded + "/" + total, this.canvas.width / 2, (this.canvas.height / 2) - 30);
+
+            var barWidth : number = 100;
+            this.fillRect((this.canvas.width - barWidth) / 2, this.canvas.height / 2, barWidth, 5, "#555555");
+            this.fillRect((this.canvas.width - barWidth) / 2, this.canvas.height / 2, barWidth * (loaded / total), 5, "#00FFFF");
 
             if (total == loaded) {
                 this.timer = setInterval(() => { this.tick() }, 1000 / this.fps);
@@ -181,14 +180,16 @@ namespace steg {
                 this.game.update(this);
                 this.game.render(this);
             } else {
-                this.fillRect(0, 0, this.canvas.width, this.canvas.height, "#000000");
-                if (this.startImage) {
-                    this.startImage.draw(this, (this.canvas.width - this.startImage.width) / 2, (this.canvas.height - this.startImage.height) / 2);
-                } else {
-                    this.ctx.fillStyle = "#FFFFFF";
-                    this.ctx.font = "20px Helvetica";
-                    this.ctx.fillText("Tap or Click to Start", 50, 50);
-                }
+                this.game.renderStartPage(this);
+
+                // this.fillRect(0, 0, this.canvas.width, this.canvas.height, "#000000");
+                // if (this.startImage) {
+                //     this.startImage.draw(this, (this.canvas.width - this.startImage.width) / 2, (this.canvas.height - this.startImage.height) / 2);
+                // } else {
+                //     this.ctx.fillStyle = "#FFFFFF";
+                //     this.ctx.font = "20px Helvetica";
+                //     this.ctx.fillText("Tap or Click to Start", 50, 50);
+                // }
             }
         }
 

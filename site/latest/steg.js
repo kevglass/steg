@@ -4,7 +4,7 @@ var __extends = (this && this.__extends) || (function () {
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
             function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
         return extendStatics(d, b);
-    }
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -25,9 +25,6 @@ var steg;
         }
         Core.prototype.start = function () {
             this.init();
-        };
-        Core.prototype.setStartImage = function (startImage) {
-            this.startImage = startImage;
         };
         Core.prototype.init = function () {
             var _this = this;
@@ -68,9 +65,11 @@ var steg;
             this.fillRect(0, 0, this.canvas.width, this.canvas.height, "#000000");
             this.ctx.fillStyle = "#FFFFFF";
             this.ctx.font = "20px Helvetica";
-            this.ctx.fillText("Loading " + loaded + "/" + total, 50, 50);
-            this.fillRect(50, 60, (this.canvas.width - 100), 20, "#555555");
-            this.fillRect(50, 60, (this.canvas.width - 100) * (loaded / total), 20, "#0000FF");
+            this.ctx.textAlign = "center";
+            this.ctx.fillText("Loading " + loaded + "/" + total, this.canvas.width / 2, (this.canvas.height / 2) - 30);
+            var barWidth = 100;
+            this.fillRect((this.canvas.width - barWidth) / 2, this.canvas.height / 2, barWidth, 5, "#555555");
+            this.fillRect((this.canvas.width - barWidth) / 2, this.canvas.height / 2, barWidth * (loaded / total), 5, "#00FFFF");
             if (total == loaded) {
                 this.timer = setInterval(function () { _this.tick(); }, 1000 / this.fps);
             }
@@ -160,15 +159,15 @@ var steg;
                 this.game.render(this);
             }
             else {
-                this.fillRect(0, 0, this.canvas.width, this.canvas.height, "#000000");
-                if (this.startImage) {
-                    this.startImage.draw(this, (this.canvas.width - this.startImage.width) / 2, (this.canvas.height - this.startImage.height) / 2);
-                }
-                else {
-                    this.ctx.fillStyle = "#FFFFFF";
-                    this.ctx.font = "20px Helvetica";
-                    this.ctx.fillText("Tap or Click to Start", 50, 50);
-                }
+                this.game.renderStartPage(this);
+                // this.fillRect(0, 0, this.canvas.width, this.canvas.height, "#000000");
+                // if (this.startImage) {
+                //     this.startImage.draw(this, (this.canvas.width - this.startImage.width) / 2, (this.canvas.height - this.startImage.height) / 2);
+                // } else {
+                //     this.ctx.fillStyle = "#FFFFFF";
+                //     this.ctx.font = "20px Helvetica";
+                //     this.ctx.fillText("Tap or Click to Start", 50, 50);
+                // }
             }
         };
         Core.prototype.setFontSize = function (size) {
@@ -210,6 +209,9 @@ var steg;
                 _this.loaded();
                 callback(_this);
             };
+            this.image.onerror = function () {
+                console.log("Failed to load: " + _this.getName());
+            };
             this.image.src = this.url;
         };
         Bitmap.prototype.loaded = function () {
@@ -219,6 +221,12 @@ var steg;
         Bitmap.prototype.drawSection = function (core, x, y, sx, sy, width, height) {
             var ctx = core.ctx;
             ctx.drawImage(this.image, sx, sy, width, height, x, y, width, height);
+        };
+        Bitmap.prototype.drawSectionReversed = function (core, x, y, sx, sy, width, height) {
+            var ctx = core.ctx;
+            ctx.scale(-1, 1);
+            ctx.drawImage(this.image, sx, sy, width, height, -x - width, y, width, height);
+            ctx.scale(-1, 1);
         };
         Bitmap.prototype.drawScaled = function (core, x, y, width, height) {
             var ctx = core.ctx;
@@ -421,6 +429,9 @@ var steg;
         Sprite.prototype.draw = function (core, x, y) {
             this.bitmap.drawSection(core, x, y, this.x, this.y, this.width, this.height);
         };
+        Sprite.prototype.drawReversed = function (core, x, y) {
+            this.bitmap.drawSectionReversed(core, x, y, this.x, this.y, this.width, this.height);
+        };
         return Sprite;
     }());
     steg.Sprite = Sprite;
@@ -490,32 +501,31 @@ var steg;
         }
         Resources.loadSpriteSheet = function (ref) {
             var sheet = new steg.SpriteSheet(ref);
-            this.added.push(sheet);
-            this.lookup[ref] = sheet;
+            this.addResource(ref, sheet);
             return sheet;
         };
         Resources.loadMusic = function (url) {
             var music = new steg.Music(url);
-            this.added.push(music);
-            this.lookup[url] = music;
+            this.addResource(url, music);
             return music;
         };
         Resources.loadSound = function (url) {
             var sound = new steg.Sound(url);
-            this.added.push(sound);
-            this.lookup[url] = sound;
+            this.addResource(url, sound);
             return sound;
+        };
+        Resources.addResource = function (key, res) {
+            this.added.push(res);
+            this.lookup[key] = res;
         };
         Resources.laodBitmap = function (url) {
             var bitmap = new steg.Bitmap(url);
-            this.added.push(bitmap);
-            this.lookup[url] = bitmap;
+            this.addResource(url, bitmap);
             return bitmap;
         };
         Resources.loadTileset = function (url, tileWidth, tileHeight) {
             var tileset = new steg.Tileset(url, tileWidth, tileHeight);
-            this.added.push(tileset);
-            this.lookup[url] = tileset;
+            this.addResource(url, tileset);
             return tileset;
         };
         Resources.load = function (core, callback) {

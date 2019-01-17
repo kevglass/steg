@@ -16,39 +16,40 @@ namespace steg {
 
         static loadSpriteSheet(ref: string): SpriteSheet {
             var sheet: SpriteSheet = new SpriteSheet(ref);
-            this.added.push(sheet);
-            this.lookup[ref] = sheet;
+            this.addResource(ref, sheet);
 
             return sheet;
         }
+        
         static loadMusic(url: string): Music {
             var music: Music = new Music(url);
-            this.added.push(music);
-            this.lookup[url] = music;
+            this.addResource(url, music);
 
             return music;
         }
 
         static loadSound(url: string): Sound {
             var sound: Sound = new Sound(url);
-            this.added.push(sound);
-            this.lookup[url] = sound;
+            this.addResource(url, sound);
 
             return sound;
         }
 
+        static addResource(key: string, res: Resource) {
+            this.added.push(res);
+            this.lookup[key] = res;
+        }
+
         static laodBitmap(url: string): Bitmap {
             var bitmap: Bitmap = new Bitmap(url);
-            this.added.push(bitmap);
-            this.lookup[url] = bitmap;
+            this.addResource(url, bitmap);
 
             return bitmap;
         }
 
         static loadTileset(url: string, tileWidth: number, tileHeight: number): Tileset {
             var tileset: Tileset = new Tileset(url, tileWidth, tileHeight);
-            this.added.push(tileset);
-            this.lookup[url] = tileset;
+            this.addResource(url, tileset);
 
             return tileset;
         }

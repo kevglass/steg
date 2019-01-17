@@ -17,6 +17,9 @@ namespace steg {
                 this.loaded();
                 callback(this);
             };
+            this.image.onerror = () => {
+                console.log("Failed to load: "+this.getName());
+            }
 
             this.image.src = this.url;
         }
@@ -30,6 +33,14 @@ namespace steg {
             var ctx: CanvasRenderingContext2D = core.ctx;
 
             ctx.drawImage(this.image, sx, sy, width, height, x, y, width, height);
+        }
+
+        drawSectionReversed(core: Core, x: number, y: number, sx: number, sy: number, width: number, height: number) {
+            var ctx: CanvasRenderingContext2D = core.ctx;
+
+            ctx.scale(-1,1);
+            ctx.drawImage(this.image, sx, sy, width, height, -x-width, y, width, height);
+            ctx.scale(-1,1);
         }
 
         drawScaled(core: Core, x: number, y: number, width: number, height: number) {

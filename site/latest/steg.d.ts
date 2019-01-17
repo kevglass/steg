@@ -11,10 +11,8 @@ declare namespace steg {
         readyToStart: boolean;
         started: boolean;
         audioContext: AudioContext;
-        startImage: Bitmap;
         constructor(canvas: HTMLCanvasElement, game: Game);
         start(): void;
-        setStartImage(startImage: Bitmap): void;
         init(): void;
         doStart(): void;
         drawLoadingScreen(loaded: number, total: number): void;
@@ -38,6 +36,7 @@ declare namespace steg {
         init(core: Core): void;
         loaded(core: Core): void;
         render(core: Core): void;
+        renderStartPage(core: Core): void;
         update(core: Core): void;
         mouseUp(core: Core, id: number, x: number, y: number): void;
         mouseDown(core: Core, id: number, x: number, y: number): void;
@@ -59,6 +58,7 @@ declare namespace steg {
         load(core: Core, callback: (res: Resource) => void): void;
         loaded(): void;
         drawSection(core: Core, x: number, y: number, sx: number, sy: number, width: number, height: number): void;
+        drawSectionReversed(core: Core, x: number, y: number, sx: number, sy: number, width: number, height: number): void;
         drawScaled(core: Core, x: number, y: number, width: number, height: number): void;
         draw(core: Core, x: number, y: number): void;
         getName(): string;
@@ -116,6 +116,7 @@ declare namespace steg {
         height: number;
         constructor(bitmap: Bitmap, x: number, y: number, width: number, height: number);
         draw(core: Core, x: number, y: number): void;
+        drawReversed(core: Core, x: number, y: number): void;
     }
 }
 declare namespace steg {
@@ -140,6 +141,7 @@ declare namespace steg {
         static loadSpriteSheet(ref: string): SpriteSheet;
         static loadMusic(url: string): Music;
         static loadSound(url: string): Sound;
+        static addResource(key: string, res: Resource): void;
         static laodBitmap(url: string): Bitmap;
         static loadTileset(url: string, tileWidth: number, tileHeight: number): Tileset;
         static load(core: Core, callback: () => void): void;

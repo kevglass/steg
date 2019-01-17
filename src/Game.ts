@@ -10,6 +10,8 @@ namespace steg {
 
         render(core: Core): void;
 
+        renderStartPage(core: Core): void;
+
         update(core: Core): void;
 
         mouseUp(core: Core, id: number, x: number, y: number): void;
