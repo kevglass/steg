@@ -99,6 +99,16 @@ namespace steg {
                     e.preventDefault();
                     this.invokeMouseMove(1, e.offsetX, e.offsetY);
                 }
+
+                document.onkeyup = (e) => {
+                    e.preventDefault();
+                    this.invokeKeyUp(e.keyCode);
+                }
+
+                document.onkeydown = (e) => {
+                    e.preventDefault();
+                    this.invokeKeyDown(e.keyCode);
+                }
             } else {
                 this.canvas.ontouchstart = (e) => {
                     e.preventDefault();
@@ -116,6 +126,16 @@ namespace steg {
 
                 this.canvas.ontouchmove = (e) => {
                     e.preventDefault();
+                }
+
+                document.onkeyup = (e) => {
+                    e.preventDefault();
+                    this.invokeKeyUp(e.keyCode);
+                }
+
+                document.onkeydown = (e) => {
+                    e.preventDefault();
+                    this.invokeKeyDown(e.keyCode);
                 }
             }
         }
@@ -156,6 +176,14 @@ namespace steg {
             }
 
             return Core.musicOn;
+        }
+
+        invokeKeyDown(key: number) {
+            this.game.keyDown(this, key);
+        }
+
+        invokeKeyUp(key: number) {
+            this.game.keyUp(this, key);
         }
 
         invokeMouseDown(id: number, x: number, y: number) {

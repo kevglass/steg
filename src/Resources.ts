@@ -55,8 +55,8 @@ namespace steg {
             return bitmap;
         }
 
-        static loadTileset(url: string, tileWidth: number, tileHeight: number): Tileset {
-            var tileset: Tileset = new Tileset(url, tileWidth, tileHeight);
+        static loadTileset(url: string, tileWidth: number, tileHeight: number, margin: number, spacing: number): Tileset {
+            var tileset: Tileset = new Tileset(url, tileWidth, tileHeight, margin, spacing);
             this.addResource(url, tileset);
 
             return tileset;

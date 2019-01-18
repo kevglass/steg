@@ -21,6 +21,8 @@ declare namespace steg {
         getSoundOn(): boolean;
         setMusicOn(musicOn: boolean): void;
         getMusicOn(): boolean;
+        invokeKeyDown(key: number): void;
+        invokeKeyUp(key: number): void;
         invokeMouseDown(id: number, x: number, y: number): void;
         invokeMouseUp(id: number, x: number, y: number): void;
         invokeMouseMove(id: number, x: number, y: number): void;
@@ -42,6 +44,21 @@ declare namespace steg {
         update(core: Core): void;
         mouseUp(core: Core, id: number, x: number, y: number): void;
         mouseDown(core: Core, id: number, x: number, y: number): void;
+        keyDown(core: Core, key: number): void;
+        keyUp(core: Core, key: number): void;
+    }
+}
+declare namespace steg {
+    class Keys {
+        static LEFT: number;
+        static UP: number;
+        static RIGHT: number;
+        static DOWN: number;
+        static SPACE: number;
+        static CTRL: number;
+        static ALT: number;
+        static CMD: number;
+        static ENTER: number;
     }
 }
 declare namespace steg {
@@ -71,7 +88,9 @@ declare namespace steg {
         tileWidth: number;
         tileHeight: number;
         scanline: number;
-        constructor(url: string, tileWidth: number, tileHeight: number);
+        margin: number;
+        spacing: number;
+        constructor(url: string, tileWidth: number, tileHeight: number, margin: number, spacing: number);
         loaded(): void;
         getName(): string;
         drawTile(core: Core, x: number, y: number, tile: number): void;
@@ -174,7 +193,7 @@ declare namespace steg {
         static loadSound(url: string): Sound;
         static addResource(key: string, res: Resource): void;
         static laodBitmap(url: string): Bitmap;
-        static loadTileset(url: string, tileWidth: number, tileHeight: number): Tileset;
+        static loadTileset(url: string, tileWidth: number, tileHeight: number, margin: number, spacing: number): Tileset;
         static load(core: Core, callback: () => void): void;
         static resourceCallback(res: Resource): void;
     }

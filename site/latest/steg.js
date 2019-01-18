@@ -91,6 +91,14 @@ var steg;
                     e.preventDefault();
                     _this.invokeMouseMove(1, e.offsetX, e.offsetY);
                 };
+                document.onkeyup = function (e) {
+                    e.preventDefault();
+                    _this.invokeKeyUp(e.keyCode);
+                };
+                document.onkeydown = function (e) {
+                    e.preventDefault();
+                    _this.invokeKeyDown(e.keyCode);
+                };
             }
             else {
                 this.canvas.ontouchstart = function (e) {
@@ -107,6 +115,14 @@ var steg;
                 };
                 this.canvas.ontouchmove = function (e) {
                     e.preventDefault();
+                };
+                document.onkeyup = function (e) {
+                    e.preventDefault();
+                    _this.invokeKeyUp(e.keyCode);
+                };
+                document.onkeydown = function (e) {
+                    e.preventDefault();
+                    _this.invokeKeyDown(e.keyCode);
                 };
             }
         };
@@ -141,6 +157,12 @@ var steg;
                 return false;
             }
             return Core.musicOn;
+        };
+        Core.prototype.invokeKeyDown = function (key) {
+            this.game.keyDown(this, key);
+        };
+        Core.prototype.invokeKeyUp = function (key) {
+            this.game.keyUp(this, key);
         };
         Core.prototype.invokeMouseDown = function (id, x, y) {
             this.doStart();
@@ -191,6 +213,24 @@ var steg;
     steg.Core = Core;
 })(steg || (steg = {}));
 /// <reference path="Core.ts"/>
+var steg;
+(function (steg) {
+    var Keys = /** @class */ (function () {
+        function Keys() {
+        }
+        Keys.LEFT = 37;
+        Keys.UP = 38;
+        Keys.RIGHT = 39;
+        Keys.DOWN = 40;
+        Keys.SPACE = 32;
+        Keys.CTRL = 17;
+        Keys.ALT = 18;
+        Keys.CMD = 91;
+        Keys.ENTER = 13;
+        return Keys;
+    }());
+    steg.Keys = Keys;
+})(steg || (steg = {}));
 /// <reference path="../Core.ts"/>
 var steg;
 /// <reference path="../Core.ts"/>
@@ -246,14 +286,18 @@ var steg;
 (function (steg) {
     var Tileset = /** @class */ (function (_super) {
         __extends(Tileset, _super);
-        function Tileset(url, tileWidth, tileHeight) {
+        function Tileset(url, tileWidth, tileHeight, margin, spacing) {
             var _this = _super.call(this, url) || this;
+            _this.margin = 0;
+            _this.spacing = 0;
             _this.tileWidth = tileWidth;
             _this.tileHeight = tileHeight;
+            _this.margin = margin;
+            _this.spacing = spacing;
             return _this;
         }
         Tileset.prototype.loaded = function () {
-            this.scanline = Math.floor(this.image.width / this.tileWidth);
+            this.scanline = Math.floor((this.image.width - (this.margin * 2)) / (this.tileWidth + this.spacing));
         };
         Tileset.prototype.getName = function () {
             return "Tileset [" + this.url + "]";
@@ -261,16 +305,16 @@ var steg;
         Tileset.prototype.drawTile = function (core, x, y, tile) {
             var xp = Math.floor(tile % this.scanline);
             var yp = Math.floor(tile / this.scanline);
-            xp *= this.tileWidth;
-            yp *= this.tileHeight;
-            core.ctx.drawImage(this.image, xp, yp, this.tileWidth, this.tileHeight, x, y, this.tileWidth, this.tileHeight);
+            xp *= this.tileWidth + this.spacing;
+            yp *= this.tileHeight + this.spacing;
+            core.ctx.drawImage(this.image, xp + this.margin, yp + this.margin, this.tileWidth, this.tileHeight, x, y, this.tileWidth, this.tileHeight);
         };
         Tileset.prototype.drawTileScaled = function (core, x, y, width, height, tile) {
             var xp = Math.floor(tile % this.scanline);
             var yp = Math.floor(tile / this.scanline);
-            xp *= this.tileWidth;
-            yp *= this.tileHeight;
-            core.ctx.drawImage(this.image, xp, yp, this.tileWidth, this.tileHeight, x, y, width, height);
+            xp *= this.tileWidth + this.spacing;
+            yp *= this.tileHeight + this.spacing;
+            core.ctx.drawImage(this.image, xp + this.margin, yp + this.margin, this.tileWidth, this.tileHeight, x, y, width, height);
         };
         Tileset.prototype.drawTileReverse = function (core, x, y, tile) {
             var xp = Math.floor(tile % this.scanline);
@@ -278,7 +322,7 @@ var steg;
             xp *= this.tileWidth;
             yp *= this.tileHeight;
             core.ctx.scale(-1, 1);
-            core.ctx.drawImage(this.image, xp, yp, this.tileWidth, this.tileHeight, -(x + this.tileWidth), y, this.tileWidth, this.tileHeight);
+            core.ctx.drawImage(this.image, xp + this.margin, yp + this.margin, this.tileWidth, this.tileHeight, -(x + this.tileWidth), y, this.tileWidth, this.tileHeight);
             core.ctx.scale(-1, 1);
         };
         return Tileset;
@@ -628,8 +672,8 @@ var steg;
             this.addResource(url, bitmap);
             return bitmap;
         };
-        Resources.loadTileset = function (url, tileWidth, tileHeight) {
-            var tileset = new steg.Tileset(url, tileWidth, tileHeight);
+        Resources.loadTileset = function (url, tileWidth, tileHeight, margin, spacing) {
+            var tileset = new steg.Tileset(url, tileWidth, tileHeight, margin, spacing);
             this.addResource(url, tileset);
             return tileset;
         };

@@ -26,7 +26,7 @@ namespace steg {
             request.onerror = (error) => { console.log(error) };
             request.send();
         }
-
+ 
         parse(data: string): void {
             var parser: DOMParser = new DOMParser();
             var doc: Document = parser.parseFromString(data, "application/xml");
