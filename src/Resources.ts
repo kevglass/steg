@@ -4,6 +4,7 @@
 /// <reference path="resources/Music.ts"/>
 /// <reference path="resources/Sound.ts"/>
 /// <reference path="resources/SpriteSheet.ts"/>
+/// <reference path="resources/TiledMap.ts"/>
 
 namespace steg {
     export class Resources {
@@ -14,13 +15,20 @@ namespace steg {
         static callback: () => void;
         static core: Core;
 
+        static loadTiledMap(url: string, tilesetMapping: { [key: string]: Tileset }): TiledMap {
+            var map: TiledMap = new TiledMap(url, tilesetMapping);
+            this.addResource(url, map);
+
+            return map;
+        }
+
         static loadSpriteSheet(ref: string): SpriteSheet {
             var sheet: SpriteSheet = new SpriteSheet(ref);
             this.addResource(ref, sheet);
 
             return sheet;
         }
-        
+
         static loadMusic(url: string): Music {
             var music: Music = new Music(url);
             this.addResource(url, music);

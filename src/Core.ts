@@ -56,6 +56,8 @@ namespace steg {
                     }
 
                     this.started = true;
+
+                    this.game.started(this);
                 }
             }
         }
@@ -181,15 +183,6 @@ namespace steg {
                 this.game.render(this);
             } else {
                 this.game.renderStartPage(this);
-
-                // this.fillRect(0, 0, this.canvas.width, this.canvas.height, "#000000");
-                // if (this.startImage) {
-                //     this.startImage.draw(this, (this.canvas.width - this.startImage.width) / 2, (this.canvas.height - this.startImage.height) / 2);
-                // } else {
-                //     this.ctx.fillStyle = "#FFFFFF";
-                //     this.ctx.font = "20px Helvetica";
-                //     this.ctx.fillText("Tap or Click to Start", 50, 50);
-                // }
             }
         }
 
@@ -211,6 +204,11 @@ namespace steg {
         fillRect(x: number, y: number, width: number, height: number, col: string): void {
             this.ctx.fillStyle = col;
             this.ctx.fillRect(x, y, width, height);
+        }
+
+        drawRect(x: number, y: number, width: number, height: number, col: string): void {
+            this.ctx.strokeStyle = col;
+            this.ctx.strokeRect(x, y, width, height);
         }
     }
 }

@@ -55,6 +55,7 @@ var steg;
                         steg.Music.currentMusic.play();
                     }
                     this.started = true;
+                    this.game.started(this);
                 }
             }
         };
@@ -160,14 +161,6 @@ var steg;
             }
             else {
                 this.game.renderStartPage(this);
-                // this.fillRect(0, 0, this.canvas.width, this.canvas.height, "#000000");
-                // if (this.startImage) {
-                //     this.startImage.draw(this, (this.canvas.width - this.startImage.width) / 2, (this.canvas.height - this.startImage.height) / 2);
-                // } else {
-                //     this.ctx.fillStyle = "#FFFFFF";
-                //     this.ctx.font = "20px Helvetica";
-                //     this.ctx.fillText("Tap or Click to Start", 50, 50);
-                // }
             }
         };
         Core.prototype.setFontSize = function (size) {
@@ -185,6 +178,10 @@ var steg;
         Core.prototype.fillRect = function (x, y, width, height, col) {
             this.ctx.fillStyle = col;
             this.ctx.fillRect(x, y, width, height);
+        };
+        Core.prototype.drawRect = function (x, y, width, height, col) {
+            this.ctx.strokeStyle = col;
+            this.ctx.strokeRect(x, y, width, height);
         };
         Core.soundOn = true;
         Core.musicOn = true;
@@ -482,12 +479,114 @@ var steg;
     }());
     steg.SpriteSheet = SpriteSheet;
 })(steg || (steg = {}));
+var steg;
+(function (steg_1) {
+    var TiledMap = /** @class */ (function () {
+        function TiledMap(url, tilesetMapping) {
+            this.tilesetMapping = {};
+            this.tilesets = [];
+            this.layers = [];
+            this.url = url;
+            this.tilesetMapping = tilesetMapping;
+        }
+        TiledMap.prototype.load = function (steg, callback) {
+            var _this = this;
+            var request = new XMLHttpRequest();
+            request.open('GET', this.url, true);
+            request.onload = function () {
+                if (request.status == 200) {
+                    _this.parse(request.responseText);
+                    callback(_this);
+                }
+            };
+            request.onerror = function (error) { console.log(error); };
+            request.send();
+        };
+        TiledMap.prototype.parse = function (data) {
+            var parser = new DOMParser();
+            var doc = parser.parseFromString(data, "application/xml");
+            var root = doc.documentElement;
+            var tilesets = root.getElementsByTagName("tileset");
+            for (var i = 0; i < tilesets.length; i++) {
+                var fg = parseInt(tilesets[i].getAttribute("firstgid"));
+                var source = tilesets[i].getAttribute("source");
+                var tileset = this.tilesetMapping[source];
+                if (!tileset) {
+                    console.log("ERROR: Unable to locate tileset image for: " + source);
+                }
+                else {
+                    var tData = new TiledMapTileset(fg, tileset);
+                    this.tilesets.push(tData);
+                }
+            }
+            this.width = parseInt(root.getAttribute("width"));
+            this.height = parseInt(root.getAttribute("height"));
+            var layers = root.getElementsByTagName("layer");
+            for (var i = 0; i < layers.length; i++) {
+                var layerData = layers[i].getElementsByTagName("data")[0].textContent;
+                var cells = layerData.split(",");
+                var cellData = [];
+                for (var k = 0; k < cells.length; k++) {
+                    cellData.push(parseInt(cells[k]));
+                }
+                this.layers.push(cellData);
+            }
+        };
+        TiledMap.prototype.getName = function () {
+            return "TiledMap [" + this.url + "]";
+        };
+        TiledMap.prototype.getTile = function (l, x, y) {
+            var layer = this.layers[l];
+            return layer[x + (y * this.width)];
+        };
+        TiledMap.prototype.isValidLocation = function (x, y) {
+            return (x >= 0) && (x < this.width) && (y > 0) && (y < this.height);
+        };
+        TiledMap.prototype.draw = function (core, x, y, sx, sy, width, height) {
+            for (var l = 0; l < this.layers.length; l++) {
+                var layer = this.layers[l];
+                for (var xp = 0; xp < width; xp++) {
+                    for (var yp = 0; yp < height; yp++) {
+                        var tx = (xp + sx);
+                        var ty = (yp + sy);
+                        if ((tx < 0) || (tx >= this.width) || (ty < 0) || (ty >= this.height)) {
+                            continue;
+                        }
+                        var t = layer[tx + (ty * this.width)];
+                        if (t != 0) {
+                            for (var n = 0; n < this.tilesets.length; n++) {
+                                if (t < this.tilesets[n].firstgid) {
+                                    break;
+                                }
+                            }
+                            // get to the right tile
+                            n--;
+                            var tileset = this.tilesets[n].tileset;
+                            t -= this.tilesets[n].firstgid;
+                            tileset.drawTile(core, x + (xp * tileset.tileWidth), y + (yp * tileset.tileHeight), t);
+                        }
+                    }
+                }
+            }
+        };
+        return TiledMap;
+    }());
+    steg_1.TiledMap = TiledMap;
+    var TiledMapTileset = /** @class */ (function () {
+        function TiledMapTileset(firstgid, tileset) {
+            this.firstgid = firstgid;
+            this.tileset = tileset;
+        }
+        return TiledMapTileset;
+    }());
+})(steg || (steg = {}));
 /// <reference path="resources/Resource.ts"/>
 /// <reference path="resources/Bitmap.ts"/>
 /// <reference path="resources/Tileset.ts"/>
 /// <reference path="resources/Music.ts"/>
 /// <reference path="resources/Sound.ts"/>
 /// <reference path="resources/SpriteSheet.ts"/>
+/// <reference path="resources/TiledMap.ts"/>
 var steg;
 /// <reference path="resources/Resource.ts"/>
 /// <reference path="resources/Bitmap.ts"/>
@@ -495,10 +594,16 @@ var steg;
 /// <reference path="resources/Music.ts"/>
 /// <reference path="resources/Sound.ts"/>
 /// <reference path="resources/SpriteSheet.ts"/>
+/// <reference path="resources/TiledMap.ts"/>
 (function (steg) {
     var Resources = /** @class */ (function () {
         function Resources() {
         }
+        Resources.loadTiledMap = function (url, tilesetMapping) {
+            var map = new steg.TiledMap(url, tilesetMapping);
+            this.addResource(url, map);
+            return map;
+        };
         Resources.loadSpriteSheet = function (ref) {
             var sheet = new steg.SpriteSheet(ref);
             this.addResource(ref, sheet);

@@ -8,6 +8,8 @@ namespace steg {
 
         loaded(core: Core): void;
 
+        started(core: Core) : void;
+
         render(core: Core): void;
 
         renderStartPage(core: Core): void;

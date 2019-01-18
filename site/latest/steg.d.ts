@@ -29,12 +29,14 @@ declare namespace steg {
         drawText(txt: string, x: number, y: number, col: string): void;
         centerText(txt: string, y: number, col: string): void;
         fillRect(x: number, y: number, width: number, height: number, col: string): void;
+        drawRect(x: number, y: number, width: number, height: number, col: string): void;
     }
 }
 declare namespace steg {
     interface Game {
         init(core: Core): void;
         loaded(core: Core): void;
+        started(core: Core): void;
         render(core: Core): void;
         renderStartPage(core: Core): void;
         update(core: Core): void;
@@ -132,12 +134,41 @@ declare namespace steg {
     }
 }
 declare namespace steg {
+    class TiledMap implements Resource {
+        url: string;
+        width: number;
+        height: number;
+        tilesetMapping: {
+            [key: string]: Tileset;
+        };
+        tilesets: Array<TiledMapTileset>;
+        layers: Array<Array<number>>;
+        constructor(url: string, tilesetMapping: {
+            [key: string]: Tileset;
+        });
+        load(steg: Core, callback: (res: Resource) => void): void;
+        parse(data: string): void;
+        getName(): string;
+        getTile(l: number, x: number, y: number): number;
+        isValidLocation(x: number, y: number): boolean;
+        draw(core: Core, x: number, y: number, sx: number, sy: number, width: number, height: number): void;
+    }
+    class TiledMapTileset {
+        firstgid: number;
+        tileset: Tileset;
+        constructor(firstgid: number, tileset: Tileset);
+    }
+}
+declare namespace steg {
     class Resources {
         static added: Array<Resource>;
         static loaded: Array<Resource>;
         static lookup: any;
         static callback: () => void;
         static core: Core;
+        static loadTiledMap(url: string, tilesetMapping: {
+            [key: string]: Tileset;
+        }): TiledMap;
         static loadSpriteSheet(ref: string): SpriteSheet;
         static loadMusic(url: string): Music;
         static loadSound(url: string): Sound;
