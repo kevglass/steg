@@ -126,6 +126,9 @@ namespace steg {
 
                 this.canvas.ontouchmove = (e) => {
                     e.preventDefault();
+                    for (var i = 0; i < e.changedTouches.length; i++) {
+                        this.invokeMouseUp(e.changedTouches.item(i).identifier, e.changedTouches.item(i).pageX, e.changedTouches.item(i).pageY);
+                    }
                 }
 
                 document.onkeyup = (e) => {
@@ -179,10 +182,14 @@ namespace steg {
         }
 
         invokeKeyDown(key: number) {
+            this.doStart();
+
             this.game.keyDown(this, key);
         }
 
         invokeKeyUp(key: number) {
+            this.doStart();
+
             this.game.keyUp(this, key);
         }
 
@@ -199,7 +206,9 @@ namespace steg {
         }
 
         invokeMouseMove(id: number, x: number, y: number) {
+            this.doStart();
 
+            this.game.mouseMove(this, id + 1, x, y);
         }
 
         tick(): void {

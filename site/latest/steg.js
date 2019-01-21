@@ -115,6 +115,9 @@ var steg;
                 };
                 this.canvas.ontouchmove = function (e) {
                     e.preventDefault();
+                    for (var i = 0; i < e.changedTouches.length; i++) {
+                        _this.invokeMouseUp(e.changedTouches.item(i).identifier, e.changedTouches.item(i).pageX, e.changedTouches.item(i).pageY);
+                    }
                 };
                 document.onkeyup = function (e) {
                     e.preventDefault();
@@ -159,9 +162,11 @@ var steg;
             return Core.musicOn;
         };
         Core.prototype.invokeKeyDown = function (key) {
+            this.doStart();
             this.game.keyDown(this, key);
         };
         Core.prototype.invokeKeyUp = function (key) {
+            this.doStart();
             this.game.keyUp(this, key);
         };
         Core.prototype.invokeMouseDown = function (id, x, y) {
@@ -173,6 +178,8 @@ var steg;
             this.game.mouseUp(this, id + 1, x, y);
         };
         Core.prototype.invokeMouseMove = function (id, x, y) {
+            this.doStart();
+            this.game.mouseMove(this, id + 1, x, y);
         };
         Core.prototype.tick = function () {
             this.canvas.width = this.canvas.clientWidth;
@@ -297,7 +304,8 @@ var steg;
             return _this;
         }
         Tileset.prototype.loaded = function () {
-            this.scanline = Math.floor((this.image.width - (this.margin * 2)) / (this.tileWidth + this.spacing));
+            this.scanline = Math.floor(this.image.width) / (this.tileWidth + this.spacing);
+            ;
         };
         Tileset.prototype.getName = function () {
             return "Tileset [" + this.url + "]";

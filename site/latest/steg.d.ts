@@ -44,6 +44,7 @@ declare namespace steg {
         update(core: Core): void;
         mouseUp(core: Core, id: number, x: number, y: number): void;
         mouseDown(core: Core, id: number, x: number, y: number): void;
+        mouseMove(core: Core, id: number, x: number, y: number): void;
         keyDown(core: Core, key: number): void;
         keyUp(core: Core, key: number): void;
     }

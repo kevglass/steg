@@ -20,6 +20,8 @@ namespace steg {
 
         mouseDown(core: Core, id: number, x: number, y: number): void;
 
+        mouseMove(core: Core, id: number, x: number, y: number): void;
+
         keyDown(core: Core, key: number) : void;
 
         keyUp(core: Core, key: number) : void;
