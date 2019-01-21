@@ -305,7 +305,6 @@ var steg;
         }
         Tileset.prototype.loaded = function () {
             this.scanline = Math.floor(this.image.width) / (this.tileWidth + this.spacing);
-            ;
         };
         Tileset.prototype.getName = function () {
             return "Tileset [" + this.url + "]";

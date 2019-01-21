@@ -19,7 +19,7 @@ namespace steg {
         }
 
         loaded(): void {
-            this.scanline = Math.floor(this.image.width) / (this.tileWidth + this.spacing));
+            this.scanline = Math.floor(this.image.width) / (this.tileWidth + this.spacing);
         }
 
         getName(): string {
