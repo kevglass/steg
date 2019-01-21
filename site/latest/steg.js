@@ -178,7 +178,6 @@ var steg;
             this.game.mouseUp(this, id + 1, x, y);
         };
         Core.prototype.invokeMouseMove = function (id, x, y) {
-            this.doStart();
             this.game.mouseMove(this, id + 1, x, y);
         };
         Core.prototype.tick = function () {

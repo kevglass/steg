@@ -206,8 +206,6 @@ namespace steg {
         }
 
         invokeMouseMove(id: number, x: number, y: number) {
-            this.doStart();
-
             this.game.mouseMove(this, id + 1, x, y);
         }
 
