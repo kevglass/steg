@@ -31,6 +31,7 @@ declare namespace steg {
         setFontSize(size: number): void;
         drawText(txt: string, x: number, y: number, col: string): void;
         centerText(txt: string, y: number, col: string): void;
+        wrapTextLimited(txt: string, x: number, y: number, width: number, limit: number, col: string): void;
         wrapText(txt: string, x: number, y: number, width: number, col: string): void;
         getStringWidth(str: string): number;
         fillRect(x: number, y: number, width: number, height: number, col: string): void;

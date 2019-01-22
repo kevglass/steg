@@ -249,6 +249,41 @@ namespace steg {
             this.ctx.fillText(txt, this.canvas.width / 2, y);
         }
 
+        wrapTextLimited(txt: string, x: number, y: number, width: number, limit: number, col: string) {
+            var words: Array<string> = txt.split(" ");
+
+            var line: string = "";
+            var yp: number = 0;
+            var total: number = 0;
+
+            for (var i = 0; i < words.length; i++) {
+                if (this.getStringWidth(line + " " + words[i]) > width) {
+                    var str : string = line;
+                    if (total + str.length > limit) {
+                        var remaining : number = (limit - total) + 1;
+                        str = str.substring(0, remaining);
+                    }
+                    this.drawText(str, x, y+yp, col);
+                    yp += this.fontSize + 4;
+                    total += line.length;
+                    if (total > limit) {
+                        break;
+                    }
+                    line = "";
+                }
+    
+                line += " " + words[i];
+            }
+            if (total < limit) {
+                var str : string = line;
+                if (total + str.length > limit) {
+                    var remaining : number = (limit - total + 1);
+                    str = str.substring(0, remaining);
+                }
+                this.drawText(str, x, y+yp, col);
+            }
+        }
+
         wrapText(txt: string, x: number, y: number, width: number, col: string) {
             var words: Array<string> = txt.split(" ");
 

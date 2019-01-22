@@ -215,6 +215,37 @@ var steg;
             this.ctx.textAlign = "center";
             this.ctx.fillText(txt, this.canvas.width / 2, y);
         };
+        Core.prototype.wrapTextLimited = function (txt, x, y, width, limit, col) {
+            var words = txt.split(" ");
+            var line = "";
+            var yp = 0;
+            var total = 0;
+            for (var i = 0; i < words.length; i++) {
+                if (this.getStringWidth(line + " " + words[i]) > width) {
+                    var str = line;
+                    if (total + str.length > limit) {
+                        var remaining = (limit - total) + 1;
+                        str = str.substring(0, remaining);
+                    }
+                    this.drawText(str, x, y + yp, col);
+                    yp += this.fontSize + 4;
+                    total += line.length;
+                    if (total > limit) {
+                        break;
+                    }
+                    line = "";
+                }
+                line += " " + words[i];
+            }
+            if (total < limit) {
+                var str = line;
+                if (total + str.length > limit) {
+                    var remaining = (limit - total + 1);
+                    str = str.substring(0, remaining);
+                }
+                this.drawText(str, x, y + yp, col);
+            }
+        };
         Core.prototype.wrapText = function (txt, x, y, width, col) {
             var words = txt.split(" ");
             var line = "";
