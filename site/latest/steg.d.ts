@@ -11,10 +11,11 @@ declare namespace steg {
         readyToStart: boolean;
         started: boolean;
         audioContext: AudioContext;
+        fontSize: number;
         constructor(canvas: HTMLCanvasElement, game: Game);
         start(): void;
         init(): void;
-        doStart(): void;
+        doStart(): boolean;
         drawLoadingScreen(loaded: number, total: number): void;
         setupMouseHandler(): void;
         setSoundOn(soundOn: boolean): void;
@@ -30,6 +31,8 @@ declare namespace steg {
         setFontSize(size: number): void;
         drawText(txt: string, x: number, y: number, col: string): void;
         centerText(txt: string, y: number, col: string): void;
+        wrapText(txt: string, x: number, y: number, width: number, col: string): void;
+        getStringWidth(str: string): number;
         fillRect(x: number, y: number, width: number, height: number, col: string): void;
         drawRect(x: number, y: number, width: number, height: number, col: string): void;
     }

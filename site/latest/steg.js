@@ -20,6 +20,7 @@ var steg;
             this.fps = 20;
             this.readyToStart = false;
             this.started = false;
+            this.fontSize = 16;
             this.game = game;
             this.canvas = canvas;
         }
@@ -56,8 +57,10 @@ var steg;
                     }
                     this.started = true;
                     this.game.started(this);
+                    return true;
                 }
             }
+            return false;
         };
         Core.prototype.drawLoadingScreen = function (loaded, total) {
             var _this = this;
@@ -162,19 +165,27 @@ var steg;
             return Core.musicOn;
         };
         Core.prototype.invokeKeyDown = function (key) {
-            this.doStart();
+            if (this.doStart()) {
+                return;
+            }
             this.game.keyDown(this, key);
         };
         Core.prototype.invokeKeyUp = function (key) {
-            this.doStart();
+            if (this.doStart()) {
+                return;
+            }
             this.game.keyUp(this, key);
         };
         Core.prototype.invokeMouseDown = function (id, x, y) {
-            this.doStart();
+            if (this.doStart()) {
+                return;
+            }
             this.game.mouseDown(this, id + 1, x, y);
         };
         Core.prototype.invokeMouseUp = function (id, x, y) {
-            this.doStart();
+            if (this.doStart()) {
+                return;
+            }
             this.game.mouseUp(this, id + 1, x, y);
         };
         Core.prototype.invokeMouseMove = function (id, x, y) {
@@ -193,6 +204,7 @@ var steg;
         };
         Core.prototype.setFontSize = function (size) {
             this.ctx.font = size + "px Helvetica";
+            this.fontSize = size;
         };
         Core.prototype.drawText = function (txt, x, y, col) {
             this.ctx.fillStyle = col;
@@ -202,6 +214,23 @@ var steg;
             this.ctx.fillStyle = col;
             this.ctx.textAlign = "center";
             this.ctx.fillText(txt, this.canvas.width / 2, y);
+        };
+        Core.prototype.wrapText = function (txt, x, y, width, col) {
+            var words = txt.split(" ");
+            var line = "";
+            var yp = 0;
+            for (var i = 0; i < words.length; i++) {
+                if (this.getStringWidth(line + " " + words[i]) > width) {
+                    this.drawText(line, x, y + yp, col);
+                    yp += this.fontSize + 4;
+                    line = "";
+                }
+                line += " " + words[i];
+            }
+            this.drawText(line, x, y + yp, col);
+        };
+        Core.prototype.getStringWidth = function (str) {
+            return this.ctx.measureText(str).width;
         };
         Core.prototype.fillRect = function (x, y, width, height, col) {
             this.ctx.fillStyle = col;

@@ -13,6 +13,7 @@ namespace steg {
         readyToStart: boolean = false;
         started: boolean = false;
         audioContext: AudioContext;
+        fontSize: number = 16;
 
         constructor(canvas: HTMLCanvasElement, game: Game) {
             this.game = game;
@@ -43,7 +44,7 @@ namespace steg {
             });
         }
 
-        doStart(): void {
+        doStart(): boolean {
             if (this.readyToStart) {
                 if (!this.started) {
                     if (this.audioContext) {
@@ -58,8 +59,11 @@ namespace steg {
                     this.started = true;
 
                     this.game.started(this);
+                    return true;
                 }
             }
+
+            return false;
         }
 
         drawLoadingScreen(loaded: number, total: number): void {
@@ -181,26 +185,34 @@ namespace steg {
             return Core.musicOn;
         }
 
-        invokeKeyDown(key: number) {
-            this.doStart();
+        invokeKeyDown(key: number) : void {
+            if (this.doStart()) {
+                return;
+            }
 
             this.game.keyDown(this, key);
         }
 
         invokeKeyUp(key: number) {
-            this.doStart();
+            if (this.doStart()) {
+                return;
+            }
 
             this.game.keyUp(this, key);
         }
 
         invokeMouseDown(id: number, x: number, y: number) {
-            this.doStart();
+            if (this.doStart()) {
+                return;
+            }
 
             this.game.mouseDown(this, id + 1, x, y);
         }
 
         invokeMouseUp(id: number, x: number, y: number) {
-            this.doStart();
+            if (this.doStart()) {
+                return;
+            }
 
             this.game.mouseUp(this, id + 1, x, y);
         }
@@ -223,6 +235,7 @@ namespace steg {
 
         setFontSize(size: number): void {
             this.ctx.font = size + "px Helvetica";
+            this.fontSize = size;
         }
 
         drawText(txt: string, x: number, y: number, col: string): void {
@@ -234,6 +247,27 @@ namespace steg {
             this.ctx.fillStyle = col;
             this.ctx.textAlign = "center";
             this.ctx.fillText(txt, this.canvas.width / 2, y);
+        }
+
+        wrapText(txt: string, x: number, y: number, width: number, col: string) {
+            var words: Array<string> = txt.split(" ");
+
+            var line: string = "";
+            var yp: number = 0;
+            for (var i = 0; i < words.length; i++) {
+                if (this.getStringWidth(line + " " + words[i]) > width) {
+                    this.drawText(line, x, y+yp, col);
+                    yp += this.fontSize + 4;
+                    line = "";
+                }
+    
+                line += " " + words[i];
+            }
+            this.drawText(line, x, y+yp, col);
+        }
+
+        getStringWidth(str: string): number {
+            return this.ctx.measureText(str).width;
         }
 
         fillRect(x: number, y: number, width: number, height: number, col: string): void {
