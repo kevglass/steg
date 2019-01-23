@@ -188,6 +188,7 @@ declare namespace steg {
         load(steg: Core, callback: (res: Resource) => void): void;
         parse(data: string): void;
         getName(): string;
+        setTile(l: number, x: number, y: number, t: number): void;
         getTile(l: number, x: number, y: number): number;
         isValidLocation(x: number, y: number): boolean;
         draw(core: Core, x: number, y: number, sx: number, sy: number, width: number, height: number): void;

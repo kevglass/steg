@@ -131,7 +131,7 @@ namespace steg {
                 this.canvas.ontouchmove = (e) => {
                     e.preventDefault();
                     for (var i = 0; i < e.changedTouches.length; i++) {
-                        this.invokeMouseUp(e.changedTouches.item(i).identifier, e.changedTouches.item(i).pageX, e.changedTouches.item(i).pageY);
+                        this.invokeMouseMove(e.changedTouches.item(i).identifier, e.changedTouches.item(i).pageX, e.changedTouches.item(i).pageY);
                     }
                 }
 

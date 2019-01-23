@@ -119,7 +119,7 @@ var steg;
                 this.canvas.ontouchmove = function (e) {
                     e.preventDefault();
                     for (var i = 0; i < e.changedTouches.length; i++) {
-                        _this.invokeMouseUp(e.changedTouches.item(i).identifier, e.changedTouches.item(i).pageX, e.changedTouches.item(i).pageY);
+                        _this.invokeMouseMove(e.changedTouches.item(i).identifier, e.changedTouches.item(i).pageX, e.changedTouches.item(i).pageY);
                     }
                 };
                 document.onkeyup = function (e) {
@@ -661,6 +661,9 @@ var steg;
         };
         TiledMap.prototype.getName = function () {
             return "TiledMap [" + this.url + "]";
+        };
+        TiledMap.prototype.setTile = function (l, x, y, t) {
+            this.layers[l][x + (y * this.width)] = t;
         };
         TiledMap.prototype.getTile = function (l, x, y) {
             var layer = this.layers[l];

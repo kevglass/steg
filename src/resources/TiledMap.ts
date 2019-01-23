@@ -22,7 +22,7 @@ namespace steg {
             for (var i=0;i<this.layers.length;i++) {
                 mapCopy.layers.push(this.layers[i].slice(0));
             }
-            
+
             return mapCopy;
         }
 
@@ -79,6 +79,10 @@ namespace steg {
 
         getName(): string {
             return "TiledMap [" + this.url + "]";
+        }
+
+        setTile(l: number, x: number, y: number, t: number) : void {
+            this.layers[l][x+(y*this.width)] = t;
         }
 
         getTile(l: number, x: number, y: number) : number {
