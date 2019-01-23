@@ -606,6 +606,16 @@ var steg;
             this.url = url;
             this.tilesetMapping = tilesetMapping;
         }
+        TiledMap.prototype.copy = function () {
+            var mapCopy = new TiledMap(this.url, this.tilesetMapping);
+            mapCopy.width = this.width;
+            mapCopy.height = this.height;
+            mapCopy.tilesets = this.tilesets;
+            for (var i = 0; i < this.layers.length; i++) {
+                mapCopy.layers.push(this.layers[i].slice(0));
+            }
+            return mapCopy;
+        };
         TiledMap.prototype.load = function (steg, callback) {
             var _this = this;
             var request = new XMLHttpRequest();
@@ -776,5 +786,55 @@ var steg;
         return Resources;
     }());
     steg.Resources = Resources;
+})(steg || (steg = {}));
+/// <reference path="GameState.ts"/>
+var steg;
+/// <reference path="GameState.ts"/>
+(function (steg) {
+    var StateBasedGame = /** @class */ (function () {
+        function StateBasedGame() {
+        }
+        StateBasedGame.prototype.enterState = function (core, state) {
+            this.current = state;
+            this.current.enterState(core);
+        };
+        StateBasedGame.prototype.render = function (core) {
+            if (this.current) {
+                this.current.render(core);
+            }
+        };
+        StateBasedGame.prototype.update = function (core) {
+            if (this.current) {
+                this.current.update(core);
+            }
+        };
+        StateBasedGame.prototype.mouseUp = function (core, id, x, y) {
+            if (this.current) {
+                this.current.mouseUp(core, id, x, y);
+            }
+        };
+        StateBasedGame.prototype.mouseDown = function (core, id, x, y) {
+            if (this.current) {
+                this.current.mouseDown(core, id, x, y);
+            }
+        };
+        StateBasedGame.prototype.keyDown = function (core, key) {
+            if (this.current) {
+                this.current.keyDown(core, key);
+            }
+        };
+        StateBasedGame.prototype.keyUp = function (core, key) {
+            if (this.current) {
+                this.current.keyUp(core, key);
+            }
+        };
+        StateBasedGame.prototype.mouseMove = function (core, id, x, y) {
+            if (this.current) {
+                this.current.mouseMove(core, id, x, y);
+            }
+        };
+        return StateBasedGame;
+    }());
+    steg.StateBasedGame = StateBasedGame;
 })(steg || (steg = {}));
 //# sourceMappingURL=steg.js.map

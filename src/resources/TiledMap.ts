@@ -12,6 +12,20 @@ namespace steg {
             this.tilesetMapping = tilesetMapping;
         }
 
+        copy(): TiledMap {
+            var mapCopy : TiledMap = new TiledMap(this.url, this.tilesetMapping);
+
+            mapCopy.width = this.width;
+            mapCopy.height = this.height;
+            mapCopy.tilesets = this.tilesets;
+
+            for (var i=0;i<this.layers.length;i++) {
+                mapCopy.layers.push(this.layers[i].slice(0));
+            }
+            
+            return mapCopy;
+        }
+
         load(steg: Core, callback: (res: Resource) => void): void {
             var request = new XMLHttpRequest();
             request.open('GET', this.url, true);

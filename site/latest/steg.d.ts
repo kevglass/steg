@@ -54,6 +54,20 @@ declare namespace steg {
     }
 }
 declare namespace steg {
+    interface GameState {
+        init(core: Core): void;
+        enterState(core: Core): void;
+        leaveState(core: Core): void;
+        render(core: Core): void;
+        update(core: Core): void;
+        mouseUp(core: Core, id: number, x: number, y: number): void;
+        mouseDown(core: Core, id: number, x: number, y: number): void;
+        keyDown(core: Core, key: number): void;
+        keyUp(core: Core, key: number): void;
+        mouseMove(core: Core, id: number, x: number, y: number): void;
+    }
+}
+declare namespace steg {
     class Keys {
         static LEFT: number;
         static UP: number;
@@ -170,6 +184,7 @@ declare namespace steg {
         constructor(url: string, tilesetMapping: {
             [key: string]: Tileset;
         });
+        copy(): TiledMap;
         load(steg: Core, callback: (res: Resource) => void): void;
         parse(data: string): void;
         getName(): string;
@@ -201,5 +216,22 @@ declare namespace steg {
         static loadTileset(url: string, tileWidth: number, tileHeight: number, margin: number, spacing: number): Tileset;
         static load(core: Core, callback: () => void): void;
         static resourceCallback(res: Resource): void;
+    }
+}
+declare namespace steg {
+    abstract class StateBasedGame implements Game {
+        current: GameState;
+        enterState(core: Core, state: GameState): void;
+        render(core: Core): void;
+        update(core: Core): void;
+        mouseUp(core: Core, id: number, x: number, y: number): void;
+        mouseDown(core: Core, id: number, x: number, y: number): void;
+        keyDown(core: Core, key: number): void;
+        keyUp(core: Core, key: number): void;
+        mouseMove(core: Core, id: number, x: number, y: number): void;
+        abstract init(core: Core): void;
+        abstract loaded(core: Core): void;
+        abstract started(core: Core): void;
+        abstract renderStartPage(core: Core): void;
     }
 }
