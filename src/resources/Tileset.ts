@@ -36,14 +36,20 @@ namespace steg {
             core.ctx.drawImage(this.image, xp + this.margin, yp + this.margin, this.tileWidth, this.tileHeight, x, y, this.tileWidth, this.tileHeight);
         }
 
-        drawTileScaled(core: Core, x: number, y: number, width: number, height: number, tile: number) {
+        drawTileScaled(core: Core, x: number, y: number, width: number, height: number, tile: number, alpha : number = 1) {
             var xp: number = Math.floor(tile % this.scanline);
             var yp: number = Math.floor(tile / this.scanline);
 
             xp *= this.tileWidth + this.spacing;
             yp *= this.tileHeight + this.spacing;
 
+            if (alpha != 1) {
+                core.ctx.globalAlpha = alpha;
+            }
             core.ctx.drawImage(this.image, xp + this.margin, yp + this.margin, this.tileWidth, this.tileHeight, x, y, width, height);
+            if (alpha != 1) {
+                core.ctx.globalAlpha = 1;
+            }
         }
 
         drawTileReverse(core: Core, x: number, y: number, tile: number) {

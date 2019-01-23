@@ -99,7 +99,7 @@ declare namespace steg {
         loaded(): void;
         getName(): string;
         drawTile(core: Core, x: number, y: number, tile: number): void;
-        drawTileScaled(core: Core, x: number, y: number, width: number, height: number, tile: number): void;
+        drawTileScaled(core: Core, x: number, y: number, width: number, height: number, tile: number, alpha?: number): void;
         drawTileReverse(core: Core, x: number, y: number, tile: number): void;
     }
 }

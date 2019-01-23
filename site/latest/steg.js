@@ -375,12 +375,19 @@ var steg;
             yp *= this.tileHeight + this.spacing;
             core.ctx.drawImage(this.image, xp + this.margin, yp + this.margin, this.tileWidth, this.tileHeight, x, y, this.tileWidth, this.tileHeight);
         };
-        Tileset.prototype.drawTileScaled = function (core, x, y, width, height, tile) {
+        Tileset.prototype.drawTileScaled = function (core, x, y, width, height, tile, alpha) {
+            if (alpha === void 0) { alpha = 1; }
             var xp = Math.floor(tile % this.scanline);
             var yp = Math.floor(tile / this.scanline);
             xp *= this.tileWidth + this.spacing;
             yp *= this.tileHeight + this.spacing;
+            if (alpha != 1) {
+                core.ctx.globalAlpha = alpha;
+            }
             core.ctx.drawImage(this.image, xp + this.margin, yp + this.margin, this.tileWidth, this.tileHeight, x, y, width, height);
+            if (alpha != 1) {
+                core.ctx.globalAlpha = 1;
+            }
         };
         Tileset.prototype.drawTileReverse = function (core, x, y, tile) {
             var xp = Math.floor(tile % this.scanline);
